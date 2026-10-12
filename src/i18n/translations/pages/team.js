@@ -72,10 +72,6 @@ export const en = {
         role: 'Director of Publicity',
         bio: 'Builds creative campaigns and community partnerships that carry the CurioCrate story further.',
       },
-      'pub-soorene': {
-        role: 'Director of Publicity',
-        bio: "Champions CurioCrate's voice across social and community channels, turning outreach into lasting connections.",
-      },
       curriculum2: {
         role: 'Director of Curriculum',
         bio: 'Crafts engaging, standards-aligned curriculum that turns everyday materials into extraordinary learning experiences.',
@@ -197,10 +193,6 @@ export const es = {
       'pub-katelyn': {
         role: 'Directora de Publicidad',
         bio: 'Crea campañas creativas y alianzas comunitarias que llevan la historia de CurioCrate más lejos.',
-      },
-      'pub-soorene': {
-        role: 'Directora de Publicidad',
-        bio: 'Impulsa la voz de CurioCrate en redes sociales y canales comunitarios, convirtiendo el alcance en conexiones duraderas.',
       },
       curriculum2: {
         role: 'Directora de Currículo',

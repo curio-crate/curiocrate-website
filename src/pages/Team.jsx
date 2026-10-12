@@ -99,18 +99,6 @@ const directors = [
     number: '04',
   },
   {
-    id: 'pub-soorene',
-    name: 'Soorene Kim',
-    role: 'Director of Publicity',
-    bio: 'Champions CurioCrate\'s voice across social and community channels, turning outreach into lasting connections.',
-    photo: '/boardmembers/soorenekimdop.png',
-    photoHeight: 270, photoExpandedHeight: 450,
-    color: '#a855f7',
-    glow: 'rgba(168,85,247,0.5)',
-    dark: '#0d0018',
-    number: '05',
-  },
-  {
     id: 'curriculum2',
     name: 'Yashitha Teekaraman',
     role: 'Director of Curriculum',
@@ -121,7 +109,7 @@ const directors = [
     color: '#2dd4bf',
     glow: 'rgba(45,212,191,0.5)',
     dark: '#00120f',
-    number: '06',
+    number: '05',
   },
   {
     id: 'curriculum3',
@@ -133,7 +121,7 @@ const directors = [
     color: '#2dd4bf',
     glow: 'rgba(45,212,191,0.5)',
     dark: '#00120f',
-    number: '07',
+    number: '06',
   },
   {
     id: 'fundraising',
@@ -146,7 +134,7 @@ const directors = [
     color: '#facc15',
     glow: 'rgba(250,204,21,0.5)',
     dark: '#170f00',
-    number: '08',
+    number: '07',
   },
 ].map(m => ({ ...m, ns: 'directors' }))
 
