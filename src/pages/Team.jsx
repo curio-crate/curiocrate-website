@@ -632,7 +632,7 @@ export default function Team() {
         {SHOW_FOUNDER_CARD && (isMobile ? (
           <div style={{ padding: '40px 20px 20px' }}>
             <MobileMemberCard
-              photo="/boardmembers/jeongseopyoonchiefexecutivefounder.png"
+              photo="/boardmembers/jeongseopyoonfounder.png"
               glow="rgba(103,232,249,0.5)"
               dark="#00080e"
               color="#67e8f9"
@@ -735,7 +735,7 @@ export default function Team() {
               filter:'blur(20px)',
             }}/>
             <img
-              src="/boardmembers/jeongseopyoonchiefexecutivefounder.png"
+              src="/boardmembers/jeongseopyoonfounder.png"
               alt="Jeongseop Yoon"
               style={{
                 height:'clamp(460px, 66vh, 740px)',
