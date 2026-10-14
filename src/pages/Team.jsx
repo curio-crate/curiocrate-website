@@ -42,9 +42,9 @@ const cabinet = [
     bio: 'Keeps the organization running with clarity and care, documenting decisions, coordinating communications, leading chapter development, and holding everything together.',
     photo: '/boardmembers/siennaleesecretary.png',
     photoHeight: 230, photoExpandedHeight: 430,
-    color: '#c084fc',
-    glow: 'rgba(192,132,252,0.5)',
-    dark: '#0a0018',
+    color: '#f87171',
+    glow: 'rgba(248,113,113,0.5)',
+    dark: '#0e0204',
     number: '03',
   },
 ].map(m => ({ ...m, ns: 'cabinet' }))
