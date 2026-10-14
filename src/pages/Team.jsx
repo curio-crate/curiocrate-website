@@ -633,9 +633,9 @@ export default function Team() {
           <div style={{ padding: '40px 20px 20px' }}>
             <MobileMemberCard
               photo="/boardmembers/jeongseopyoonfounder.png"
-              glow="rgba(103,232,249,0.5)"
-              dark="#00080e"
-              color="#67e8f9"
+              glow="rgba(248,113,113,0.5)"
+              dark="#0e0204"
+              color="#f87171"
               role={t('team.founder.roleLabel')}
               name="Jeongseop Yoon"
               bio={t('team.founder.bio')}
@@ -653,23 +653,23 @@ export default function Team() {
             margin:'72px 40px 20px',
             borderRadius:24,
             overflow:'hidden',
-            border:'1px solid rgba(103,232,249,0.18)',
-            boxShadow:'0 0 80px rgba(103,232,249,0.08), 0 60px 160px rgba(0,0,0,0.7)',
+            border:'1px solid rgba(248,113,113,0.18)',
+            boxShadow:'0 0 80px rgba(248,113,113,0.08), 0 60px 160px rgba(0,0,0,0.7)',
             minHeight:'88vh',
             display:'flex',
             flexDirection:'column',
             justifyContent:'flex-end',
-            background:'#00080e',
+            background:'#0e0204',
           }}
         >
           {/* ── Atmosphere ── */}
           <div style={{
             position:'absolute', inset:0,
-            background:'radial-gradient(ellipse 65% 90% at 50% 30%, rgba(103,232,249,0.1) 0%, rgba(0,8,14,0.6) 55%, #00080e 100%)',
+            background:'radial-gradient(ellipse 65% 90% at 50% 30%, rgba(248,113,113,0.1) 0%, rgba(14,2,4,0.6) 55%, #0e0204 100%)',
           }}/>
           <div style={{
             position:'absolute', inset:0,
-            backgroundImage:'linear-gradient(rgba(103,232,249,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(103,232,249,0.05) 1px, transparent 1px)',
+            backgroundImage:'linear-gradient(rgba(248,113,113,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(248,113,113,0.05) 1px, transparent 1px)',
             backgroundSize:'44px 44px',
           }}/>
 
@@ -677,7 +677,7 @@ export default function Team() {
           <div style={{ position:'absolute', inset:0, zIndex:1, pointerEvents:'none', overflow:'hidden' }}>
             <div style={{
               position:'absolute', left:0, right:0, height:'1px',
-              background:'linear-gradient(90deg, transparent, rgba(103,232,249,0.07), transparent)',
+              background:'linear-gradient(90deg, transparent, rgba(248,113,113,0.07), transparent)',
               animation:'scanline 10s linear infinite',
             }}/>
           </div>
@@ -688,7 +688,7 @@ export default function Team() {
             fontFamily:"'Cormorant Garamond', serif",
             fontSize:'clamp(280px, 35vw, 480px)',
             fontWeight:300, lineHeight:1,
-            color:'#67e8f9', opacity:0.028,
+            color:'#f87171', opacity:0.028,
             userSelect:'none', pointerEvents:'none', zIndex:0,
           }}>
             00
@@ -707,7 +707,7 @@ export default function Team() {
           >
             <div className="label" style={{
               fontSize:10, letterSpacing:'8px',
-              color:'#67e8f9', opacity:0.65,
+              color:'#f87171', opacity:0.65,
             }}>
               ◈ &nbsp; {t('team.founder.eyebrow')} &nbsp; ◈
             </div>
@@ -730,7 +730,7 @@ export default function Team() {
               position:'absolute', bottom:0, left:'50%', transform:'translateX(-50%)',
               width:'clamp(300px, 40vw, 560px)', height:'clamp(300px, 40vw, 560px)',
               borderRadius:'50%',
-              background:'radial-gradient(circle, rgba(103,232,249,0.18) 0%, transparent 65%)',
+              background:'radial-gradient(circle, rgba(248,113,113,0.18) 0%, transparent 65%)',
               animation:'breathe 5s ease-in-out infinite',
               filter:'blur(20px)',
             }}/>
@@ -740,7 +740,7 @@ export default function Team() {
               style={{
                 height:'clamp(460px, 66vh, 740px)',
                 objectFit:'contain', objectPosition:'bottom',
-                filter:'drop-shadow(0 0 50px rgba(103,232,249,0.65)) drop-shadow(0 0 120px rgba(103,232,249,0.3)) drop-shadow(0 0 200px rgba(103,232,249,0.12))',
+                filter:'drop-shadow(0 0 50px rgba(248,113,113,0.65)) drop-shadow(0 0 120px rgba(248,113,113,0.3)) drop-shadow(0 0 200px rgba(248,113,113,0.12))',
                 display:'block',
                 animation:'drift 7s ease-in-out infinite',
               }}
@@ -751,7 +751,7 @@ export default function Team() {
           <div style={{
             position:'relative', zIndex:5,
             padding:'120px 64px 56px',
-            background:'linear-gradient(to top, #00080e 0%, rgba(0,8,14,0.92) 35%, rgba(0,8,14,0.5) 65%, transparent 100%)',
+            background:'linear-gradient(to top, #0e0204 0%, rgba(14,2,4,0.92) 35%, rgba(14,2,4,0.5) 65%, transparent 100%)',
           }}>
             <div style={{
               display:'flex', alignItems:'flex-end',
@@ -769,13 +769,13 @@ export default function Team() {
                   fontWeight:300, color:'var(--cream)',
                   lineHeight:0.92, letterSpacing:'-0.03em',
                   marginBottom:20,
-                  textShadow:'0 0 80px rgba(103,232,249,0.5), 0 0 160px rgba(103,232,249,0.2)',
+                  textShadow:'0 0 80px rgba(248,113,113,0.5), 0 0 160px rgba(248,113,113,0.2)',
                 }}>
                   Jeongseop<br/>Yoon
                 </h2>
                 <div style={{ display:'flex', alignItems:'center', gap:16 }}>
-                  <div style={{ width:32, height:1, background:'linear-gradient(to right, #67e8f9, transparent)' }}/>
-                  <div className="label" style={{ color:'#67e8f9', fontSize:11, letterSpacing:'4px' }}>
+                  <div style={{ width:32, height:1, background:'linear-gradient(to right, #f87171, transparent)' }}/>
+                  <div className="label" style={{ color:'#f87171', fontSize:11, letterSpacing:'4px' }}>
                     {t('team.founder.roleLabel')}
                   </div>
                 </div>
@@ -803,12 +803,12 @@ export default function Team() {
                     fontFamily:"'JetBrains Mono', monospace",
                     fontSize:11, letterSpacing:'3px', textTransform:'uppercase',
                     textDecoration:'none', padding:'13px 28px',
-                    border:'1px solid rgba(103,232,249,0.4)', borderRadius:4,
-                    color:'#67e8f9', background:'rgba(103,232,249,0.06)',
+                    border:'1px solid rgba(248,113,113,0.4)', borderRadius:4,
+                    color:'#f87171', background:'rgba(248,113,113,0.06)',
                     display:'inline-block', transition:'all 0.35s ease',
                   }}
-                  onMouseEnter={e=>{ e.currentTarget.style.background='rgba(103,232,249,0.14)'; e.currentTarget.style.boxShadow='0 0 36px rgba(103,232,249,0.25)'; e.currentTarget.style.borderColor='rgba(103,232,249,0.7)' }}
-                  onMouseLeave={e=>{ e.currentTarget.style.background='rgba(103,232,249,0.06)'; e.currentTarget.style.boxShadow='none'; e.currentTarget.style.borderColor='rgba(103,232,249,0.4)' }}
+                  onMouseEnter={e=>{ e.currentTarget.style.background='rgba(248,113,113,0.14)'; e.currentTarget.style.boxShadow='0 0 36px rgba(248,113,113,0.25)'; e.currentTarget.style.borderColor='rgba(248,113,113,0.7)' }}
+                  onMouseLeave={e=>{ e.currentTarget.style.background='rgba(248,113,113,0.06)'; e.currentTarget.style.boxShadow='none'; e.currentTarget.style.borderColor='rgba(248,113,113,0.4)' }}
                 >
                   ✉ &nbsp; {t('team.founder.cta')}
                 </a>
@@ -823,7 +823,7 @@ export default function Team() {
             transition={{ delay:0.2, duration:1.2, ease:[0.4,0,0.2,1] }}
             style={{
               position:'absolute', top:0, left:0, right:0, height:2,
-              background:'linear-gradient(to right, transparent, rgba(103,232,249,0.6), rgba(103,232,249,0.9), rgba(103,232,249,0.6), transparent)',
+              background:'linear-gradient(to right, transparent, rgba(248,113,113,0.6), rgba(248,113,113,0.9), rgba(248,113,113,0.6), transparent)',
               transformOrigin:'center', zIndex:6,
             }}
           />
