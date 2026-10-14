@@ -4,8 +4,8 @@ import PageTransition from '../components/PageTransition'
 import { useMobile } from '../hooks/useMobile'
 import { useLanguage } from '../i18n/useLanguage'
 
-// Founder card hidden again at the site owner's request (2026-10-01).
-const SHOW_FOUNDER_CARD = false
+// Founder card shown again at the site owner's request (2026-10-13).
+const SHOW_FOUNDER_CARD = true
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
