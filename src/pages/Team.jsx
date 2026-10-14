@@ -721,7 +721,7 @@ export default function Team() {
             transition={{ duration:1.4, ease:[0.4,0,0.2,1], delay:0.1 }}
             style={{
               position:'absolute',
-              bottom:0, left:'50%', transform:'translateX(-50%)',
+              bottom:'clamp(120px, 20vh, 220px)', left:'50%', transform:'translateX(-50%)',
               zIndex:2, pointerEvents:'none',
               display:'flex', alignItems:'flex-end', justifyContent:'center',
             }}
@@ -738,8 +738,10 @@ export default function Team() {
               src="/boardmembers/jeongseopyoonfounder.png"
               alt="Jeongseop Yoon"
               style={{
-                height:'clamp(460px, 66vh, 740px)',
+                height:'clamp(420px, 58vh, 660px)',
                 objectFit:'contain', objectPosition:'bottom',
+                maskImage:'linear-gradient(to bottom, black 82%, transparent 100%)',
+                WebkitMaskImage:'linear-gradient(to bottom, black 82%, transparent 100%)',
                 filter:'drop-shadow(0 0 50px rgba(248,113,113,0.65)) drop-shadow(0 0 120px rgba(248,113,113,0.3)) drop-shadow(0 0 200px rgba(248,113,113,0.12))',
                 display:'block',
                 animation:'drift 7s ease-in-out infinite',
