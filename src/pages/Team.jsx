@@ -734,19 +734,25 @@ export default function Team() {
               animation:'breathe 5s ease-in-out infinite',
               filter:'blur(20px)',
             }}/>
-            <img
-              src="/boardmembers/jeongseopyoonfounder.png"
-              alt="Jeongseop Yoon"
-              style={{
-                height:'clamp(420px, 58vh, 660px)',
-                objectFit:'contain', objectPosition:'bottom',
-                maskImage:'linear-gradient(to bottom, black 82%, transparent 100%)',
-                WebkitMaskImage:'linear-gradient(to bottom, black 82%, transparent 100%)',
-                filter:'drop-shadow(0 0 50px rgba(248,113,113,0.65)) drop-shadow(0 0 120px rgba(248,113,113,0.3)) drop-shadow(0 0 200px rgba(248,113,113,0.12))',
-                display:'block',
-                animation:'drift 7s ease-in-out infinite',
-              }}
-            />
+            {/* Glow lives on a wrapper, not the img: a mask on the same element
+                would clip the drop-shadow to the photo's rectangle (visible box). */}
+            <div style={{
+              position:'relative',
+              filter:'drop-shadow(0 0 50px rgba(248,113,113,0.65)) drop-shadow(0 0 120px rgba(248,113,113,0.3)) drop-shadow(0 0 200px rgba(248,113,113,0.12))',
+              animation:'drift 7s ease-in-out infinite',
+            }}>
+              <img
+                src="/boardmembers/jeongseopyoonfounder.png"
+                alt="Jeongseop Yoon"
+                style={{
+                  height:'clamp(420px, 58vh, 660px)',
+                  objectFit:'contain', objectPosition:'bottom',
+                  maskImage:'linear-gradient(to bottom, black 70%, transparent 100%)',
+                  WebkitMaskImage:'linear-gradient(to bottom, black 70%, transparent 100%)',
+                  display:'block',
+                }}
+              />
+            </div>
           </motion.div>
 
           {/* ── Bottom text overlay ── */}
