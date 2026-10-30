@@ -522,15 +522,12 @@ export default function Home() {
               style={{ textAlign: 'center', marginBottom: 40 }}
             >
               <Link to="/kits/luminol" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 18,
-                padding: '7px 14px', borderRadius: 999, textDecoration: 'none',
-                background: 'rgba(4,19,21,0.7)', border: '1px solid rgba(70,227,211,0.55)',
-                boxShadow: '0 0 22px rgba(70,227,211,0.25)', backdropFilter: 'blur(10px)',
-                fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '1.5px',
-                textTransform: 'uppercase', color: '#9ff3e9',
+                display: 'inline-block', marginBottom: 18, padding: '8px 16px', borderRadius: 6,
+                textDecoration: 'none', background: 'rgba(3,5,15,0.65)', color: 'var(--cream)',
+                fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 600,
+                textShadow: '0 1px 8px rgba(3,5,15,0.8)', borderBottom: '2px solid #46e3d3',
               }}>
-                <span aria-hidden style={{ width: 7, height: 7, borderRadius: '50%', background: '#46e3d3', boxShadow: '0 0 8px #46e3d3' }} />
-                {t('luminol.home.eyebrow')} →
+                {t('luminol.home.heroLink')} →
               </Link>
               <h1 style={{
                 fontFamily: "'Cormorant Garamond', serif",

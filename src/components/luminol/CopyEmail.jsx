@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useLanguage } from '../../i18n/useLanguage'
 
-export const SPONSOR_EMAIL = 'ckfcuriocrate@gmail.com'
+export const SPONSOR_EMAIL = 'contact@curiocrate.org'
 
 /** The sponsorship email as real, selectable text plus a Copy button (and a mailto fallback). */
 export default function CopyEmail({ compact = false }) {

@@ -9,7 +9,7 @@ export default function KitBox({ open = false, width = 360, label }) {
     <div
       role="img"
       aria-label={label}
-      style={{ width: '100%', maxWidth: width, aspectRatio: `${width} / ${h + width * 0.2}`, position: 'relative', perspective: 900 }}
+      style={{ width: `min(${width}px, 100%)`, aspectRatio: `${width} / ${h + width * 0.2}`, position: 'relative', perspective: 900 }}
     >
       {/* floor glow */}
       <div aria-hidden style={{

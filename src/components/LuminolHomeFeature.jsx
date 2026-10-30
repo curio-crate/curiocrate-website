@@ -20,12 +20,8 @@ export default function LuminolHomeFeature() {
           display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: 36, alignItems: 'center',
         }}>
           <div>
-            <div className="lum-eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span aria-hidden style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--lum-glow)', boxShadow: '0 0 10px var(--lum-glow)' }} />
-              {t('luminol.home.eyebrow')}
-            </div>
-            <h2 style={{ fontSize: 'clamp(34px, 5.6vw, 58px)', margin: '14px 0 14px' }}>{t('luminol.home.title')}</h2>
-            <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--lum-muted)', maxWidth: 560 }}>{t('luminol.home.text')}</p>
+            <h2 style={{ fontSize: 'clamp(32px, 5vw, 54px)', margin: '0 0 16px' }}>{t('luminol.home.title')}</h2>
+            <p style={{ fontSize: 17, lineHeight: 1.6, color: 'var(--lum-muted)', maxWidth: 560 }}>{t('luminol.home.text')}</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 26 }}>
               <Link to="/kits/luminol#sponsor" className="lum-btn lum-btn--primary">{t('luminol.home.sponsor')}</Link>
               <Link to="/kits/luminol" className="lum-btn lum-btn--ghost">{t('luminol.home.cta')} →</Link>

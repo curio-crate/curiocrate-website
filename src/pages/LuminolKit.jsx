@@ -4,16 +4,14 @@ import PageTransition from '../components/PageTransition'
 import Reveal from '../components/luminol/Reveal'
 import KitBox from '../components/luminol/KitBox'
 import Vial from '../components/luminol/Vial'
-import { DILUTIONS, GLOW } from '../components/luminol/glow'
+import { GLOW } from '../components/luminol/glow'
 import CopyEmail from '../components/luminol/CopyEmail'
-import DilutionLabel from '../components/luminol/DilutionLabel'
 import { useLanguage } from '../i18n/useLanguage'
 import '../components/luminol/luminol.css'
 
 const IMG = '/kits/luminol'
 
 const INSIDE_ITEMS = ['reagents', 'vials', 'beakers', 'pipette', 'gloves', 'sleeve', 'manual', 'teacher', 'assessment']
-const STEPS = ['s1', 's2', 's3', 's4', 's5']
 const MANUAL_PAGES = [
   { key: 'cover',     src: `${IMG}/manual-cover.webp`,        page: 1 },
   { key: 'scene',     src: `${IMG}/manual-scene.webp`,        page: 6 },
@@ -48,10 +46,9 @@ const wrap = { maxWidth: 1120, margin: '0 auto', padding: '0 clamp(16px, 4vw, 32
 const section = { padding: 'clamp(72px, 11vw, 128px) 0' }
 const h2 = { fontSize: 'clamp(36px, 6.4vw, 64px)', margin: '12px 0 0' }
 
-function SectionHead({ eyebrow, title, sub, center }) {
+function SectionHead({ title, sub, center }) {
   return (
     <Reveal style={{ marginBottom: 'clamp(28px, 5vw, 48px)', textAlign: center ? 'center' : 'left' }}>
-      <div className="lum-eyebrow">{eyebrow}</div>
       <h2 style={h2}>{title}</h2>
       {sub && <p style={{ color: 'var(--lum-muted)', marginTop: 12, fontSize: 16 }}>{sub}</p>}
     </Reveal>
@@ -74,7 +71,7 @@ function Hero() {
     }}>
       <div className="lk-hero" style={{ ...wrap, width: '100%', display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 48, alignItems: 'center' }}>
         <div>
-          <div className="lum-eyebrow">{t('luminol.hero.eyebrow')}</div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--lum-glow)' }}>{t('luminol.hero.kicker')}</div>
           <h1 style={{ fontSize: 'clamp(46px, 8.4vw, 92px)', margin: '16px 0 20px' }}>
             {t('luminol.hero.title')}
           </h1>
@@ -91,10 +88,8 @@ function Hero() {
             color: 'var(--lum-glow)', textDecoration: 'none', borderBottom: '1px solid rgba(70,227,211,0.4)', paddingBottom: 3,
           }}>▶ {t('luminol.hero.tryDemo')}</Link>
           <p style={{
-            marginTop: 28, display: 'flex', gap: 10, alignItems: 'flex-start',
-            fontSize: 13, lineHeight: 1.5, color: 'var(--lum-paper)', maxWidth: 480,
+            marginTop: 28, fontSize: 15, lineHeight: 1.5, color: 'var(--lum-paper)', maxWidth: 480,
           }}>
-            <span aria-hidden style={{ width: 8, height: 8, borderRadius: '50%', background: '#f0c070', marginTop: 5, flexShrink: 0, boxShadow: '0 0 10px rgba(240,192,112,0.7)' }} />
             {t('luminol.hero.status')}
           </p>
         </div>
@@ -131,155 +126,70 @@ function Glyph({ d, size = 22 }) {
 function Inside() {
   const { t } = useLanguage()
   const [active, setActive] = useState(null)
-  const [manualOpen, setManualOpen] = useState(null)
 
   return (
     <section id="inside" style={{ ...section, background: 'linear-gradient(180deg, var(--lum-bg) 0%, var(--lum-bg2) 100%)', scrollMarginTop: 60 }}>
       <div style={wrap}>
-        <SectionHead eyebrow={t('luminol.inside.eyebrow')} title={t('luminol.inside.title')} />
-        <Reveal>
-          {revealed => {
-            const open = manualOpen ?? revealed
-            return (
-              <div className="lk-inside" style={{ display: 'grid', gridTemplateColumns: '0.8fr 1.2fr', gap: 'clamp(28px, 5vw, 56px)', alignItems: 'center' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
-                  <div style={{ position: 'relative' }}>
-                    <KitBox open={open} width={320} label={t('luminol.hero.boxAlt')} />
-                    <span className="lum-tag" style={{ position: 'absolute', top: -8, left: 0 }}>{t('luminol.common.prototype')}</span>
-                  </div>
-                  <button type="button" className="lum-btn lum-btn--ghost" onClick={() => setManualOpen(!open)} aria-pressed={open}>
-                    {open ? t('luminol.inside.close') : t('luminol.inside.open')}
-                  </button>
-                </div>
-
-                <div>
-                  <ul style={{ listStyle: 'none', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 10 }}>
-                    {INSIDE_ITEMS.map((key, i) => (
-                      <li key={key} style={{
-                        opacity: open ? 1 : 0,
-                        transform: open ? 'none' : 'translateY(14px) scale(.96)',
-                        transition: `opacity .5s ease ${open ? 250 + i * 70 : 0}ms, transform .5s ease ${open ? 250 + i * 70 : 0}ms`,
-                      }}>
-                        <button
-                          type="button"
-                          onMouseEnter={() => setActive(key)}
-                          onFocus={() => setActive(key)}
-                          onClick={() => setActive(key)}
-                          aria-describedby="lk-inside-detail"
-                          tabIndex={open ? 0 : -1}
-                          style={{
-                            width: '100%', minHeight: 64, textAlign: 'left', cursor: 'pointer',
-                            display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 8,
-                            background: active === key ? 'rgba(70,227,211,0.12)' : 'var(--lum-panel)',
-                            border: `1px solid ${active === key ? 'rgba(70,227,211,0.6)' : 'var(--lum-line)'}`,
-                            color: 'var(--lum-text)', fontFamily: 'inherit', fontSize: 14, fontWeight: 600, lineHeight: 1.25,
-                            transition: 'background .2s, border-color .2s',
-                          }}
-                        >
-                          <span style={{ color: 'var(--lum-glow)', flexShrink: 0 }}><Glyph d={ITEM_GLYPHS[key]} /></span>
-                          {t(`luminol.inside.items.${key}.label`)}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                  <p id="lk-inside-detail" aria-live="polite" style={{
-                    marginTop: 16, minHeight: 52, padding: '14px 16px', borderRadius: 8,
-                    background: 'var(--lum-paper)', color: 'var(--lum-paper-ink)', fontSize: 15, lineHeight: 1.45,
-                  }}>
-                    {active ? t(`luminol.inside.items.${active}.detail`) : t('luminol.inside.hint')}
-                  </p>
-                  <p style={{ marginTop: 10, fontSize: 12, color: 'var(--lum-muted)' }}>{t('luminol.inside.prototypeNote')}</p>
-                </div>
-              </div>
-            )
-          }}
-        </Reveal>
+        <SectionHead title={t('luminol.inside.title')} />
+        <ul style={{ listStyle: 'none', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
+          {INSIDE_ITEMS.map((key, i) => (
+            <Reveal as="li" key={key} delay={i * 50}>
+              <button
+                type="button"
+                onMouseEnter={() => setActive(key)}
+                onFocus={() => setActive(key)}
+                onClick={() => setActive(key)}
+                aria-describedby="lk-inside-detail"
+                style={{
+                  width: '100%', minHeight: 64, textAlign: 'left', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderRadius: 8,
+                  background: active === key ? 'rgba(70,227,211,0.12)' : 'var(--lum-panel)',
+                  border: `1px solid ${active === key ? 'rgba(70,227,211,0.6)' : 'var(--lum-line)'}`,
+                  color: 'var(--lum-text)', fontFamily: 'inherit', fontSize: 15, fontWeight: 600, lineHeight: 1.25,
+                  transition: 'background .2s, border-color .2s',
+                }}
+              >
+                <span style={{ color: 'var(--lum-glow)', flexShrink: 0 }}><Glyph d={ITEM_GLYPHS[key]} /></span>
+                {t(`luminol.inside.items.${key}.label`)}
+              </button>
+            </Reveal>
+          ))}
+        </ul>
+        <p id="lk-inside-detail" aria-live="polite" style={{
+          marginTop: 16, minHeight: 52, padding: '14px 16px', borderRadius: 8,
+          background: 'var(--lum-paper)', color: 'var(--lum-paper-ink)', fontSize: 16, lineHeight: 1.45,
+        }}>
+          {active ? t(`luminol.inside.items.${active}.detail`) : t('luminol.inside.hint')}
+        </p>
+        <p style={{ marginTop: 10, fontSize: 13, color: 'var(--lum-muted)' }}>{t('luminol.inside.prototypeNote')}</p>
       </div>
     </section>
   )
 }
 
-/* ── 3. How the case works + vial slider ─────────────────────────────── */
-function VialSlider() {
-  const { t } = useLanguage()
-  const [tested, setTested] = useState(4)
-  // Limit = last tested vial whose glow is still realistically visible.
-  let limit = 0
-  const vialName = n => DILUTIONS[n - 1]
-    ? t('demo.s3.vialLabel').replace('{n}', n).replace('{d}', DILUTIONS[n - 1])
-    : t('demo.s3.vialBlank')
-  for (let i = 0; i < tested; i++) if (GLOW[i] >= 0.1) limit = i + 1
-
-  return (
-    <div style={{ marginTop: 40, padding: 'clamp(18px, 4vw, 32px)', borderRadius: 14, background: '#020b0c', border: '1px solid var(--lum-line)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 18 }}>
-        <h3 style={{ fontSize: 'clamp(22px, 3.4vw, 30px)' }}>{t('luminol.how.sim.title')}</h3>
-        <span style={{ fontFamily: 'var(--lum-mono)', fontSize: 12, color: 'var(--lum-glow)', alignSelf: 'center' }} aria-live="polite">
-          {`${vialName(tested)} · ${t(`luminol.how.sim.levels.${tested - 1}`)}`}
-        </span>
-      </div>
-
-      <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', justifyItems: 'center', padding: '12px 0 8px' }}>
-        {GLOW.map((g, i) => (
-          <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, position: 'relative', width: '100%' }}>
-            <div style={{ width: 'clamp(30px, 8vw, 56px)' }}>
-              <Vial
-                n={i + 1} glow={g} lit={i < tested} width="100%"
-                selected={i === tested - 1}
-                label={vialName(i + 1)}
-              />
-            </div>
-            <span style={{ fontFamily: 'var(--lum-mono)', fontSize: 'clamp(8px, 2vw, 11px)', color: 'var(--lum-muted)', whiteSpace: 'nowrap' }}>
-              <DilutionLabel i={i} blank="H₂O" />
-            </span>
-            {limit === i + 1 && (
-              <div aria-hidden className="lum-pulse" style={{
-                position: 'absolute', top: -6, bottom: -6, right: 0, borderRight: '2px dashed var(--lum-glow)',
-              }}>
-                <span style={{
-                  position: 'absolute', top: -18, right: -6, transform: 'translateX(50%)', whiteSpace: 'nowrap',
-                  fontFamily: 'var(--lum-mono)', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--lum-glow)',
-                }}>{t('luminol.how.sim.limit')}</span>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <label style={{ display: 'block', marginTop: 22 }}>
-        <span className="lum-sr">{t('luminol.how.sim.slider')}</span>
-        <input
-          type="range" min={1} max={6} step={1} value={tested}
-          onChange={e => setTested(Number(e.target.value))}
-          aria-valuetext={`${vialName(tested)}, ${t(`luminol.how.sim.levels.${tested - 1}`)}`}
-          style={{ width: '100%', accentColor: '#46e3d3', height: 28, cursor: 'pointer' }}
-        />
-      </label>
-      <p style={{ marginTop: 8, fontSize: 12, color: 'var(--lum-muted)' }}>{t('luminol.how.sim.caption')}</p>
-    </div>
-  )
-}
-
-function HowItWorks() {
+/* ── 3. Link to the playable demo ────────────────────────────────────── */
+function DemoPromo() {
   const { t } = useLanguage()
   return (
     <section style={{ ...section, background: 'var(--lum-bg2)' }}>
       <div style={wrap}>
-        <SectionHead eyebrow={t('luminol.how.eyebrow')} title={t('luminol.how.title')} />
-        <ol className="lk-steps" style={{ listStyle: 'none', display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, counterReset: 'step' }}>
-          {STEPS.map((s, i) => (
-            <Reveal as="li" key={s} delay={i * 110} style={{
-              padding: '20px 18px', borderRadius: 10, background: 'var(--lum-panel)', border: '1px solid var(--lum-line)',
-            }}>
-              <div style={{ fontFamily: 'var(--lum-display)', fontWeight: 700, fontSize: 40, lineHeight: 1, color: 'var(--lum-glow)', textShadow: '0 0 18px rgba(70,227,211,0.5)' }}>
-                {String(i + 1).padStart(2, '0')}
-              </div>
-              <h3 style={{ fontSize: 22, margin: '10px 0 6px' }}>{t(`luminol.how.steps.${s}.title`)}</h3>
-              <p style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--lum-muted)' }}>{t(`luminol.how.steps.${s}.text`)}</p>
-            </Reveal>
-          ))}
-        </ol>
-        <Reveal><VialSlider /></Reveal>
+        <Reveal>
+          <Link to="/demo" className="lk-demo-card" style={{
+            display: 'grid', gridTemplateColumns: '1fr auto', gap: 32, alignItems: 'center',
+            padding: 'clamp(28px, 5vw, 56px)', borderRadius: 18, textDecoration: 'none', color: 'var(--lum-text)',
+            background: 'radial-gradient(ellipse 60% 90% at 85% 60%, rgba(70,227,211,0.18) 0%, rgba(2,11,12,0) 70%), #020b0c',
+            border: '1px solid rgba(70,227,211,0.35)',
+          }}>
+            <div>
+              <h2 style={{ fontSize: 'clamp(40px, 7vw, 76px)' }}>{t('luminol.demoPromo.title')}</h2>
+              <p style={{ fontSize: 'clamp(17px, 2.2vw, 21px)', color: 'var(--lum-muted)', margin: '14px 0 26px', maxWidth: 520 }}>{t('luminol.demoPromo.text')}</p>
+              <span className="lum-btn lum-btn--primary" style={{ fontSize: 14, padding: '18px 30px' }}>▶ {t('luminol.demoPromo.cta')}</span>
+            </div>
+            <div aria-hidden className="lk-demo-vials" style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
+              {GLOW.map((g, i) => <Vial key={i} n={i + 1} glow={g} lit width={40} />)}
+            </div>
+          </Link>
+        </Reveal>
       </div>
     </section>
   )
@@ -312,7 +222,7 @@ function ManualPeek() {
     <section style={{ ...section, background: 'var(--lum-bg)' }}>
       <div style={wrap}>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-          <SectionHead eyebrow={t('luminol.manual.eyebrow')} title={t('luminol.manual.title')} sub={t('luminol.manual.sub')} />
+          <SectionHead title={t('luminol.manual.title')} sub={t('luminol.manual.sub')} />
           <div style={{ display: 'flex', gap: 8, marginBottom: 'clamp(28px, 5vw, 48px)' }}>
             <button type="button" className="lum-btn lum-btn--ghost" onClick={() => scroll(-1)} aria-label={t('luminol.common.prev')} style={{ padding: '12px 18px' }}>←</button>
             <button type="button" className="lum-btn lum-btn--ghost" onClick={() => scroll(1)} aria-label={t('luminol.common.next')} style={{ padding: '12px 18px' }}>→</button>
@@ -373,40 +283,50 @@ function ManualPeek() {
   )
 }
 
-/* ── 5. What students learn ──────────────────────────────────────────── */
-const TOPIC_ICONS = {
-  redox: <><circle cx="7" cy="12" r="3.5" /><circle cx="17" cy="12" r="3.5" /><path d="M10.5 9.5c1-1.2 2-1.2 3 0M13 8.5l.5 1-1 .3" /></>,
-  catalysts: <path d="M13 2L5 13h6l-1 9 8-11h-6z" />,
-  ph: <><rect x="3" y="5" width="18" height="14" rx="3" /><text x="12" y="15.5" textAnchor="middle" fontSize="8" fontFamily="JetBrains Mono" fill="currentColor" stroke="none">pH</text></>,
-  dilution: <><path d="M5 4c-2 3-2 5 0 6 2-1 2-3 0-6z" /><path d="M12 9c-1.5 2.2-1.5 3.7 0 4.5 1.5-.8 1.5-2.3 0-4.5z" opacity=".75" /><path d="M19 14c-1 1.5-1 2.5 0 3 1-.5 1-1.5 0-3z" opacity=".5" /><path d="M3 21h18" /></>,
-  controls: <><path d="M6 3v13a2 2 0 0 0 4 0V3M14 3v13a2 2 0 0 0 4 0V3M5 3h6M13 3h6" /><path d="M7 11h2" /></>,
-  lod: <><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" /><circle cx="12" cy="12" r="2.5" /><path d="M2 21h20" strokeDasharray="2 2" /></>,
-  reasoning: <><circle cx="10.5" cy="10.5" r="6" /><path d="M15 15l6 6M8 10.5l2 2 3-4" /></>,
-}
+/* ── 5. What students learn + NGSS ──────────────────────────────────── */
+const NGSS = [
+  { group: 'pe',  rows: ['ps12'] },
+  { group: 'dci', rows: ['ps1b'] },
+  { group: 'sep', rows: ['invest', 'data', 'math', 'explain', 'argue'] },
+  { group: 'ccc', rows: ['pattern', 'cause', 'scale'] },
+]
 
 function Learn() {
   const { t } = useLanguage()
   return (
     <section style={{ ...section, background: 'var(--lum-bg2)' }}>
       <div style={wrap}>
-        <SectionHead eyebrow={t('luminol.learn.eyebrow')} title={t('luminol.learn.title')} />
-        <ul style={{ listStyle: 'none', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 12 }}>
-          {TOPICS.map((k, i) => (
-            <Reveal as="li" key={k} delay={i * 60} style={{
-              padding: '22px 16px', borderRadius: 10, background: 'var(--lum-panel)', border: '1px solid var(--lum-line)',
-              display: 'flex', flexDirection: 'column', gap: 14,
-            }}>
-              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#46e3d3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden
-                style={{ filter: 'drop-shadow(0 0 6px rgba(70,227,211,0.55))' }}>
-                {TOPIC_ICONS[k]}
-              </svg>
-              <span style={{ fontWeight: 600, fontSize: 15, lineHeight: 1.3 }}>{t(`luminol.learn.topics.${k}`)}</span>
-            </Reveal>
+        <SectionHead title={t('luminol.learn.title')} />
+        <Reveal as="ul" style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {TOPICS.map(k => (
+            <li key={k} style={{
+              padding: '10px 16px', borderRadius: 999, fontSize: 15, fontWeight: 600,
+              background: 'var(--lum-panel)', border: '1px solid rgba(70,227,211,0.3)',
+            }}>{t(`luminol.learn.topics.${k}`)}</li>
           ))}
-        </ul>
-        <Reveal style={{ marginTop: 28, display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <span className="lum-tag lum-tag--paper" style={{ alignSelf: 'flex-start', fontSize: 11, letterSpacing: 1.2, textTransform: 'none' }}>{t('luminol.learn.grade')}</span>
-          <p style={{ fontSize: 16, color: 'var(--lum-muted)' }}>{t('luminol.learn.careers')}</p>
+        </Reveal>
+        <Reveal as="p" style={{ marginTop: 18, fontSize: 16, color: 'var(--lum-muted)' }}>{t('luminol.learn.careers')}</Reveal>
+
+        <Reveal style={{ marginTop: 48, borderRadius: 12, background: 'var(--lum-paper)', color: 'var(--lum-paper-ink)', padding: 'clamp(20px, 4vw, 36px)' }}>
+          <h3 style={{ fontSize: 'clamp(24px, 3.4vw, 32px)' }}>{t('luminol.learn.ngssTitle')}</h3>
+          <p style={{ marginTop: 6, fontSize: 14, opacity: 0.75 }}>{t('luminol.learn.ngssSub')}</p>
+          {NGSS.map(g => (
+            <div key={g.group} style={{ marginTop: 24 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#0f6f68', marginBottom: 6 }}>{t(`luminol.learn.groups.${g.group}`)}</div>
+              <dl style={{ margin: 0 }}>
+                {g.rows.map(r => (
+                  <div key={r} className="lk-ngss-row" style={{
+                    display: 'grid', gridTemplateColumns: '92px 230px 1fr', gap: 16, padding: '12px 0',
+                    borderTop: '1px solid rgba(43,36,22,0.18)', alignItems: 'baseline',
+                  }}>
+                    <dt style={{ fontFamily: 'var(--lum-mono)', fontSize: 13, fontWeight: 700 }}>{t(`luminol.learn.rows.${r}.code`)}</dt>
+                    <dt style={{ fontWeight: 700, fontSize: 15 }}>{t(`luminol.learn.rows.${r}.name`)}</dt>
+                    <dd style={{ margin: 0, fontSize: 15, lineHeight: 1.5 }}>{t(`luminol.learn.rows.${r}.what`)}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))}
         </Reveal>
       </div>
     </section>
@@ -427,7 +347,7 @@ function Compare() {
   return (
     <section style={{ ...section, background: 'var(--lum-bg)' }}>
       <div style={wrap}>
-        <SectionHead eyebrow={t('luminol.compare.eyebrow')} title={t('luminol.compare.title')} />
+        <SectionHead title={t('luminol.compare.title')} />
         <Reveal>
           <table className="lk-compare" style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, fontSize: 15 }}>
             <thead>
@@ -479,7 +399,7 @@ function Progress() {
   return (
     <section style={{ ...section, background: 'var(--lum-bg2)' }}>
       <div style={wrap}>
-        <SectionHead eyebrow={t('luminol.progress.eyebrow')} title={t('luminol.progress.title')} />
+        <SectionHead title={t('luminol.progress.title')} />
         <ol className="lk-progress" style={{ listStyle: 'none', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', position: 'relative' }}>
           {PROGRESS.map((p, i) => {
             const st = STATUS_STYLE[p.status]
@@ -521,7 +441,7 @@ function Safety() {
   return (
     <section style={{ ...section, background: 'var(--lum-bg)' }}>
       <div style={{ ...wrap, maxWidth: 820 }}>
-        <SectionHead eyebrow={t('luminol.safety.eyebrow')} title={t('luminol.safety.title')} />
+        <SectionHead title={t('luminol.safety.title')} />
         <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
           {items.map((k, i) => (
             <Reveal as="li" key={k} delay={i * 80} style={{ display: 'flex', gap: 14, alignItems: 'center', padding: '16px 18px', borderRadius: 10, background: 'var(--lum-panel)', border: '1px solid var(--lum-line)' }}>
@@ -552,7 +472,7 @@ function Team() {
       <div style={wrap}>
         <div className="lk-team" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(32px, 6vw, 72px)', alignItems: 'center' }}>
           <div>
-            <SectionHead eyebrow={t('luminol.team.eyebrow')} title={t('luminol.team.title')} />
+            <SectionHead title={t('luminol.team.title')} />
             <Reveal>
               <p style={{ fontSize: 16, color: 'var(--lum-muted)' }}>{t('luminol.team.origin')}</p>
               <blockquote style={{
@@ -586,7 +506,7 @@ function Plans() {
   return (
     <section style={{ ...section, paddingTop: 0, background: 'var(--lum-bg2)' }}>
       <div style={wrap}>
-        <SectionHead eyebrow={t('luminol.plans.eyebrow')} title={t('luminol.plans.title')} />
+        <SectionHead title={t('luminol.plans.title')} />
         <ul style={{ listStyle: 'none', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14 }}>
           {['kits', 'pilot'].map((k, i) => (
             <Reveal as="li" key={k} delay={i * 100} style={{ padding: '22px 20px', borderRadius: 10, border: '1px dashed rgba(70,227,211,0.4)', display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -609,7 +529,7 @@ function Sponsor() {
       background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(70,227,211,0.14) 0%, rgba(4,19,21,0) 70%), var(--lum-bg)',
     }}>
       <div style={wrap}>
-        <SectionHead eyebrow={t('luminol.sponsor.eyebrow')} title={t('luminol.sponsor.title')} sub={t('luminol.sponsor.sub')} center />
+        <SectionHead title={t('luminol.sponsor.title')} sub={t('luminol.sponsor.sub')} center />
 
         {/* What your sponsorship builds */}
         <Reveal>
@@ -630,17 +550,10 @@ function Sponsor() {
         {/* Founding sponsor callout */}
         <Reveal style={{
           marginTop: 22, padding: 'clamp(20px, 4vw, 28px)', borderRadius: 12,
-          border: '1px solid rgba(240,192,112,0.55)', background: 'linear-gradient(120deg, rgba(240,192,112,0.12), rgba(240,192,112,0.02))',
-          display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'wrap',
+          border: '1px solid rgba(240,192,112,0.55)', background: 'rgba(240,192,112,0.08)',
         }}>
-          <span style={{
-            fontFamily: 'var(--lum-mono)', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: '#1d1405',
-            background: '#f0c070', padding: '6px 10px', borderRadius: 4, fontWeight: 700,
-          }}>★ {t('luminol.sponsor.founding.badge')}</span>
-          <div style={{ flex: '1 1 260px' }}>
-            <div style={{ fontFamily: 'var(--lum-display)', fontWeight: 700, fontSize: 26, textTransform: 'uppercase' }}>{t('luminol.sponsor.founding.title')}</div>
-            <div style={{ color: 'var(--lum-muted)', marginTop: 4 }}>{t('luminol.sponsor.founding.text')}</div>
-          </div>
+          <div style={{ fontFamily: 'var(--lum-display)', fontWeight: 700, fontSize: 28, textTransform: 'uppercase', color: '#f0c070' }}>{t('luminol.sponsor.founding.title')}</div>
+          <div style={{ marginTop: 6, fontSize: 17 }}>{t('luminol.sponsor.founding.text')}</div>
         </Reveal>
 
         {/* Tiers */}
@@ -712,7 +625,7 @@ export default function LuminolKit() {
       <main className="lum">
         <Hero />
         <Inside />
-        <HowItWorks />
+        <DemoPromo />
         <ManualPeek />
         <Learn />
         <Compare />
@@ -726,9 +639,14 @@ export default function LuminolKit() {
         .lk-track { scrollbar-width: none; }
         .lk-hero > * { min-width: 0; }
         @media (max-width: 900px) {
+          .lk-ngss-row { grid-template-columns: 80px 1fr !important; }
+          .lk-ngss-row dd { grid-column: 1 / -1; }
+          .lk-demo-card { grid-template-columns: 1fr !important; }
+          .lk-demo-vials { justify-content: center; }
+        }
+        @media (max-width: 900px) {
           .lk-hero { grid-template-columns: 1fr !important; gap: 40px !important; }
           .lk-inside, .lk-team, .lk-sponsor-foot { grid-template-columns: 1fr !important; }
-          .lk-steps { grid-template-columns: 1fr 1fr !important; }
         }
         @media (max-width: 720px) {
           .lk-progress { grid-template-columns: 1fr !important; gap: 0; }
@@ -740,7 +658,6 @@ export default function LuminolKit() {
           .lk-progress-line[data-done="true"] { border-left: none; }
         }
         @media (max-width: 560px) {
-          .lk-steps { grid-template-columns: 1fr !important; }
           .lk-compare th, .lk-compare td { padding-left: 4px !important; padding-right: 4px !important; }
           .lk-compare thead th { font-size: 9px !important; letter-spacing: 0.5px !important; }
           .lk-compare tbody th { font-size: 13px; }

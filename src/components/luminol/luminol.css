@@ -41,9 +41,9 @@
 
 .lum-tag {
   display: inline-flex; align-items: center; gap: 6px;
-  font-family: var(--lum-mono);
-  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
-  padding: 5px 10px; border-radius: 4px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 12px; font-weight: 600;
+  padding: 4px 10px; border-radius: 4px;
   background: rgba(4, 19, 21, 0.85);
   border: 1px dashed rgba(var(--lum-glow-rgb), 0.55);
   color: var(--lum-glow);
