@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PageTransition from '../components/PageTransition'
 import KitProgressBar from '../components/KitProgressBar'
+import LuminolHomeFeature from '../components/LuminolHomeFeature'
 import { useLanguage } from '../i18n/useLanguage'
 
 function InternshipBanner() {
@@ -88,6 +89,7 @@ export default function Kits() {
   return (
     <PageTransition>
       <KitProgressBar goal={progress.goal} current={progress.current} checkpoints={checkpoints} />
+      <div style={{ paddingBottom: 140 }}><LuminolHomeFeature /></div>
       {!loading && <InternshipBanner />}
     </PageTransition>
   )

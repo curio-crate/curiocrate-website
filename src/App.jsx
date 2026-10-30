@@ -5,6 +5,8 @@ import CinematicFooter from './components/CinematicFooter'
 import ParticleField from './components/ParticleField'
 import Home from './pages/Home'
 import Kits from './pages/Kits'
+import LuminolKit from './pages/LuminolKit'
+import Demo from './pages/Demo'
 import Gallery from './pages/Gallery'
 import KitDevelopment from './pages/KitDevelopment'
 import CreatorProgram from './pages/CreatorProgram'
@@ -24,6 +26,8 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/"         element={<Home />} />
         <Route path="/kits"     element={<Kits />} />
+        <Route path="/kits/luminol" element={<LuminolKit />} />
+        <Route path="/demo"     element={<Demo />} />
         <Route path="/gallery"  element={<Gallery />} />
         <Route path="/initiatives/sap"      element={<KitDevelopment />} />
         <Route path="/initiatives/kits"      element={<CreatorProgram />} />

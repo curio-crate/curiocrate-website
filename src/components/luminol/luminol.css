@@ -1,0 +1,125 @@
+/* Shared "darkened forensic lab" theme for the Luminol kit page (/kits/luminol) and the
+   playable demo (/demo). Everything is scoped under .lum so it can't leak into the rest of
+   the site's cosmic-blue look. One accent (luminol glow) + manila case-file paper. */
+
+.lum {
+  --lum-bg:        #041315;
+  --lum-bg2:       #06191c;
+  --lum-panel:     rgba(10, 34, 37, 0.72);
+  --lum-line:      rgba(70, 227, 211, 0.16);
+  --lum-glow:      #46e3d3;
+  --lum-glow-rgb:  70, 227, 211;
+  --lum-paper:     #e8d8b0;
+  --lum-paper-ink: #2b2416;
+  --lum-text:      #e4f3f0;
+  --lum-muted:     rgba(214, 238, 233, 0.66);
+  --lum-display:   'Barlow Condensed', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --lum-mono:      'JetBrains Mono', ui-monospace, monospace;
+
+  position: relative;
+  z-index: 1;
+  background: var(--lum-bg);
+  color: var(--lum-text);
+  overflow-x: clip;
+}
+
+.lum h1, .lum h2, .lum h3 {
+  font-family: var(--lum-display);
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  line-height: 0.98;
+}
+
+.lum-eyebrow {
+  font-family: var(--lum-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--lum-glow);
+}
+
+.lum-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--lum-mono);
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  padding: 5px 10px; border-radius: 4px;
+  background: rgba(4, 19, 21, 0.85);
+  border: 1px dashed rgba(var(--lum-glow-rgb), 0.55);
+  color: var(--lum-glow);
+}
+.lum-tag--paper {
+  background: var(--lum-paper); color: var(--lum-paper-ink);
+  border: 1px solid rgba(43, 36, 22, 0.35);
+}
+
+.lum-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--lum-mono);
+  font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 700;
+  padding: 15px 26px; border-radius: 6px; cursor: pointer;
+  text-decoration: none; border: 1px solid transparent;
+  transition: transform .2s ease, box-shadow .25s ease, background .25s ease, color .25s ease;
+  min-height: 48px;
+}
+.lum-btn--primary {
+  background: var(--lum-glow); color: #02201d;
+  box-shadow: 0 0 0 0 rgba(var(--lum-glow-rgb), 0);
+}
+.lum-btn--primary:hover { box-shadow: 0 0 28px rgba(var(--lum-glow-rgb), 0.45); transform: translateY(-1px); }
+.lum-btn--ghost {
+  background: transparent; color: var(--lum-text);
+  border-color: rgba(var(--lum-glow-rgb), 0.4);
+}
+.lum-btn--ghost:hover { background: rgba(var(--lum-glow-rgb), 0.1); border-color: var(--lum-glow); }
+.lum-btn--paper { background: var(--lum-paper); color: var(--lum-paper-ink); }
+.lum-btn--paper:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+.lum-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.lum :focus-visible {
+  outline: 2px solid var(--lum-glow);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Reveal-on-scroll. Elements are VISIBLE by default — they only get hidden once the
+   IntersectionObserver has actually reported them off-screen (see Reveal.jsx). If the
+   observer never fires (background tab, throttled rAF), content stays visible instead of
+   being stuck at opacity 0 — the failure mode CLAUDE.md documents for the Kits page. */
+.lum-reveal { transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
+.lum-reveal[data-state="hidden"] { opacity: 0; transform: translateY(28px); }
+.lum-reveal[data-state="shown"]  { opacity: 1; transform: none; }
+
+/* Vial glow */
+.lum-vial-glow { transition: opacity .9s ease; }
+@keyframes lum-bloom {
+  0%   { transform: scale(.4); opacity: .9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.lum-bloom { animation: lum-bloom .9s ease-out forwards; transform-origin: center; transform-box: fill-box; }
+@keyframes lum-pulse {
+  0%, 100% { opacity: .55; }
+  50%      { opacity: 1; }
+}
+.lum-pulse { animation: lum-pulse 2.2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lum *, .lum *::before, .lum *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .lum-reveal[data-state="hidden"] { opacity: 1; transform: none; }
+}
+
+.lum-short { display: none; }
+@media (max-width: 560px) {
+  .lum-long  { display: none; }
+  .lum-short { display: inline; }
+}
+
+.lum-sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}

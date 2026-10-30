@@ -12,6 +12,9 @@ export const en = {
   nav: {
     discover: 'Discover',
     kits: 'Kits',
+    kitsFunding: 'Funding Progress',
+    luminolKit: 'Luminol Forensics Kit',
+    tryDemo: 'Try the Demo',
     newsletter: 'Newsletter',
     initiatives: 'Initiatives',
     kitDevelopmentItem: 'Kit Development',
@@ -51,6 +54,9 @@ export const es = {
   nav: {
     discover: 'Descubrir',
     kits: 'Kits',
+    kitsFunding: 'Progreso de Fondos',
+    luminolKit: 'Kit Forense de Luminol',
+    tryDemo: 'Prueba la Demo',
     newsletter: 'Boletín',
     initiatives: 'Iniciativas',
     kitDevelopmentItem: 'Desarrollo de Kits',

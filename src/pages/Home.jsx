@@ -9,6 +9,7 @@ import PageTransition from '../components/PageTransition'
 import AutoplayVideo from '../components/AutoplayVideo'
 import FadingText from '../components/FadingText'
 import NewsArticleModal from '../components/NewsArticleModal'
+import LuminolHomeFeature from '../components/LuminolHomeFeature'
 import { useLanguage } from '../i18n/useLanguage'
 import { stats } from '../data/stats'
 import { news } from '../data/news'
@@ -520,6 +521,17 @@ export default function Home() {
               transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
               style={{ textAlign: 'center', marginBottom: 40 }}
             >
+              <Link to="/kits/luminol" style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 18,
+                padding: '7px 14px', borderRadius: 999, textDecoration: 'none',
+                background: 'rgba(4,19,21,0.7)', border: '1px solid rgba(70,227,211,0.55)',
+                boxShadow: '0 0 22px rgba(70,227,211,0.25)', backdropFilter: 'blur(10px)',
+                fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '1.5px',
+                textTransform: 'uppercase', color: '#9ff3e9',
+              }}>
+                <span aria-hidden style={{ width: 7, height: 7, borderRadius: '50%', background: '#46e3d3', boxShadow: '0 0 8px #46e3d3' }} />
+                {t('luminol.home.eyebrow')} →
+              </Link>
               <h1 style={{
                 fontFamily: "'Cormorant Garamond', serif",
                 fontSize: 'clamp(32px, 5.5vw, 72px)',
@@ -752,6 +764,9 @@ export default function Home() {
           </motion.div>
         </div>
       </motion.section>
+
+      {/* ─── LUMINOL KIT FUNDRAISER ─── */}
+      <LuminolHomeFeature />
 
       {/* ─── RECENT NEWS: DISPATCH BOARD ─── */}
       <section ref={newsRef} style={{ position: 'relative', zIndex: 1, padding: '120px 0 140px', overflow: 'hidden' }}>

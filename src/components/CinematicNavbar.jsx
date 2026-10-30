@@ -5,8 +5,13 @@ import LanguageSwitcher from './LanguageSwitcher'
 
 const NAV_LEFT = [
   { path: '/',            labelKey: 'nav.discover'  },
-  { path: '/kits',        labelKey: 'nav.kits'      },
   { path: '/newsletter',  labelKey: 'nav.newsletter' },
+]
+
+const KITS_ITEMS = [
+  { id: 'luminolKit',  path: '/kits/luminol', labelKey: 'nav.luminolKit',  highlight: true },
+  { id: 'tryDemo',     path: '/demo',         labelKey: 'nav.tryDemo'     },
+  { id: 'kitsFunding', path: '/kits',         labelKey: 'nav.kitsFunding', end: true },
 ]
 
 const INITIATIVES_ITEMS = [
@@ -24,6 +29,7 @@ const ABOUT_ITEMS = [
 
 const ALL_NAV = [
   ...NAV_LEFT.map(item => ({ ...item, id: item.path })),
+  ...KITS_ITEMS,
   ...INITIATIVES_ITEMS,
   ...ABOUT_ITEMS,
 ]
@@ -112,6 +118,63 @@ function NavItem({ path, label, end, theme }) {
   )
 }
 
+function NavDropdown({ label, items, open, onOpen, onClose, active, theme, t, minWidth = 180 }) {
+  return (
+    <div style={{ position: 'relative' }} onMouseEnter={onOpen} onMouseLeave={onClose} onFocus={onOpen} onBlur={onClose}>
+      <button aria-haspopup="true" aria-expanded={open} style={{
+        fontFamily: "'JetBrains Mono', monospace",
+        fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase',
+        background: active ? theme.activeBg : 'transparent',
+        border: active ? `1px solid ${theme.activeBorder}` : '1px solid transparent',
+        borderRadius: 4, padding: '8px 14px',
+        color: active || open ? theme.text : theme.muted,
+        cursor: 'pointer', transition: 'all 0.3s ease',
+        display: 'flex', alignItems: 'center', gap: 6,
+      }}>
+        {label}
+        <span style={{
+          fontSize: 8, opacity: 0.6,
+          transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+          transition: 'transform 0.25s ease', display: 'inline-block',
+        }}>▾</span>
+      </button>
+
+      <div style={{
+        position: 'absolute', top: 'calc(100% + 8px)', left: '50%',
+        background: theme.dropdownBg, backdropFilter: 'blur(24px)',
+        border: theme.dropdownBorder, borderRadius: 12,
+        padding: '8px', minWidth,
+        opacity: open ? 1 : 0,
+        pointerEvents: open ? 'auto' : 'none',
+        transform: open
+          ? 'translateX(-50%) translateY(0)'
+          : 'translateX(-50%) translateY(-8px)',
+        transition: 'opacity 0.2s ease, transform 0.2s ease',
+        boxShadow: theme.dropdownShadow,
+      }}>
+        {items.map(item => (
+          <NavLink
+            key={item.id}
+            to={item.path}
+            end={item.end}
+            style={({ isActive }) => ({
+              display: 'block', padding: '10px 16px', borderRadius: 8,
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase',
+              textDecoration: 'none', whiteSpace: 'nowrap',
+              color: isActive ? theme.text : (item.highlight ? theme.accent : theme.muted),
+              background: isActive ? theme.activeBg : 'transparent',
+              transition: 'all 0.2s ease',
+            })}
+            onMouseEnter={e => { e.currentTarget.style.background = theme.hoverBg; e.currentTarget.style.color = theme.hoverText }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = item.highlight ? theme.accent : theme.muted }}
+          >{t(item.labelKey)}</NavLink>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function CinematicNavbar() {
   const { t } = useLanguage()
   const [visible,          setVisible]          = useState(true)
@@ -119,9 +182,11 @@ export default function CinematicNavbar() {
   const [atTop,            setAtTop]            = useState(true)
   const [aboutOpen,        setAboutOpen]        = useState(false)
   const [initiativesOpen,  setInitiativesOpen]  = useState(false)
+  const [kitsOpen,         setKitsOpen]         = useState(false)
   const [menuOpen,         setMenuOpen]         = useState(false)
   const aboutTimer       = useRef(null)
   const initiativesTimer = useRef(null)
+  const kitsTimer        = useRef(null)
   const location         = useLocation()
 
   const isLight = location.pathname.startsWith(LIGHT_ROUTE_PREFIX)
@@ -153,6 +218,10 @@ export default function CinematicNavbar() {
   const closeInitiatives = () => { initiativesTimer.current = setTimeout(() => setInitiativesOpen(false), 120) }
   const isInitiativesActive = location.pathname.startsWith('/initiatives')
 
+  const openKits  = () => { clearTimeout(kitsTimer.current); setKitsOpen(true) }
+  const closeKits = () => { kitsTimer.current = setTimeout(() => setKitsOpen(false), 120) }
+  const isKitsActive = KITS_ITEMS.some(i => location.pathname === i.path)
+
   return (
     <>
       <nav className="cn-nav" style={{
@@ -180,113 +249,24 @@ export default function CinematicNavbar() {
         {/* Desktop nav */}
         <div className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
 
-          {NAV_LEFT.map(r => <NavItem key={r.path} path={r.path} label={t(r.labelKey)} end={r.path === '/'} theme={theme} />)}
+          <NavItem path={NAV_LEFT[0].path} label={t(NAV_LEFT[0].labelKey)} end theme={theme} />
 
-          {/* Initiatives dropdown */}
-          <div style={{ position: 'relative' }} onMouseEnter={openInitiatives} onMouseLeave={closeInitiatives}>
-            <button style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase',
-              background: isInitiativesActive ? theme.activeBg : 'transparent',
-              border: isInitiativesActive ? `1px solid ${theme.activeBorder}` : '1px solid transparent',
-              borderRadius: 4, padding: '8px 14px',
-              color: isInitiativesActive || initiativesOpen ? theme.text : theme.muted,
-              cursor: 'pointer', transition: 'all 0.3s ease',
-              display: 'flex', alignItems: 'center', gap: 6,
-            }}>
-              {t('nav.initiatives')}
-              <span style={{
-                fontSize: 8, opacity: 0.6,
-                transform: initiativesOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.25s ease', display: 'inline-block',
-              }}>▾</span>
-            </button>
+          <NavDropdown
+            label={t('nav.kits')} items={KITS_ITEMS} open={kitsOpen}
+            onOpen={openKits} onClose={closeKits} active={isKitsActive} theme={theme} t={t} minWidth={240}
+          />
 
-            <div style={{
-              position: 'absolute', top: 'calc(100% + 8px)', left: '50%',
-              background: theme.dropdownBg, backdropFilter: 'blur(24px)',
-              border: theme.dropdownBorder, borderRadius: 12,
-              padding: '8px', minWidth: 180,
-              opacity: initiativesOpen ? 1 : 0,
-              pointerEvents: initiativesOpen ? 'auto' : 'none',
-              transform: initiativesOpen
-                ? 'translateX(-50%) translateY(0)'
-                : 'translateX(-50%) translateY(-8px)',
-              transition: 'opacity 0.2s ease, transform 0.2s ease',
-              boxShadow: theme.dropdownShadow,
-            }}>
-              {INITIATIVES_ITEMS.map(item => (
-                <NavLink
-                  key={item.id}
-                  to={item.path}
-                  style={({ isActive }) => ({
-                    display: 'block', padding: '10px 16px', borderRadius: 8,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase',
-                    textDecoration: 'none',
-                    color: isActive ? theme.text : theme.muted,
-                    background: isActive ? theme.activeBg : 'transparent',
-                    transition: 'all 0.2s ease',
-                  })}
-                  onMouseEnter={e => { e.currentTarget.style.background = theme.hoverBg; e.currentTarget.style.color = theme.hoverText }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = theme.muted }}
-                >{t(item.labelKey)}</NavLink>
-              ))}
-            </div>
-          </div>
+          {NAV_LEFT.slice(1).map(r => <NavItem key={r.path} path={r.path} label={t(r.labelKey)} theme={theme} />)}
 
-          {/* About dropdown */}
-          <div style={{ position: 'relative' }} onMouseEnter={openAbout} onMouseLeave={closeAbout}>
-            <button style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 11, letterSpacing: '3px', textTransform: 'uppercase',
-              background: isAboutActive ? theme.activeBg : 'transparent',
-              border: isAboutActive ? `1px solid ${theme.activeBorder}` : '1px solid transparent',
-              borderRadius: 4, padding: '8px 14px',
-              color: isAboutActive || aboutOpen ? theme.text : theme.muted,
-              cursor: 'pointer', transition: 'all 0.3s ease',
-              display: 'flex', alignItems: 'center', gap: 6,
-            }}>
-              {t('nav.aboutUs')}
-              <span style={{
-                fontSize: 8, opacity: 0.6,
-                transform: aboutOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.25s ease', display: 'inline-block',
-              }}>▾</span>
-            </button>
+          <NavDropdown
+            label={t('nav.initiatives')} items={INITIATIVES_ITEMS} open={initiativesOpen}
+            onOpen={openInitiatives} onClose={closeInitiatives} active={isInitiativesActive} theme={theme} t={t}
+          />
 
-            <div style={{
-              position: 'absolute', top: 'calc(100% + 8px)', left: '50%',
-              background: theme.dropdownBg, backdropFilter: 'blur(24px)',
-              border: theme.dropdownBorder, borderRadius: 12,
-              padding: '8px', minWidth: 160,
-              opacity: aboutOpen ? 1 : 0,
-              pointerEvents: aboutOpen ? 'auto' : 'none',
-              transform: aboutOpen
-                ? 'translateX(-50%) translateY(0)'
-                : 'translateX(-50%) translateY(-8px)',
-              transition: 'opacity 0.2s ease, transform 0.2s ease',
-              boxShadow: theme.dropdownShadow,
-            }}>
-              {ABOUT_ITEMS.map(item => (
-                <NavLink
-                  key={item.id}
-                  to={item.path}
-                  style={({ isActive }) => ({
-                    display: 'block', padding: '10px 16px', borderRadius: 8,
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase',
-                    textDecoration: 'none',
-                    color: isActive ? theme.text : theme.muted,
-                    background: isActive ? theme.activeBg : 'transparent',
-                    transition: 'all 0.2s ease',
-                  })}
-                  onMouseEnter={e => { e.currentTarget.style.background = theme.hoverBg; e.currentTarget.style.color = theme.hoverText }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = theme.muted }}
-                >{t(item.labelKey)}</NavLink>
-              ))}
-            </div>
-          </div>
+          <NavDropdown
+            label={t('nav.aboutUs')} items={ABOUT_ITEMS} open={aboutOpen}
+            onOpen={openAbout} onClose={closeAbout} active={isAboutActive} theme={theme} t={t} minWidth={160}
+          />
 
           <LanguageSwitcher size="sm" />
 
@@ -372,7 +352,7 @@ export default function CinematicNavbar() {
             <NavLink
               key={item.id}
               to={item.path}
-              end={item.path === '/'}
+              end={item.path === '/' || item.end}
               onClick={() => setMenuOpen(false)}
               style={({ isActive }) => ({
                 fontFamily: "'Cormorant Garamond', serif",
