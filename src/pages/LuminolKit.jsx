@@ -6,6 +6,8 @@ import KitBox from '../components/luminol/KitBox'
 import Vial from '../components/luminol/Vial'
 import { GLOW } from '../components/luminol/glow'
 import CopyEmail from '../components/luminol/CopyEmail'
+import NgssPlate from '../components/luminol/NgssPlate'
+import SponsorBox from '../components/luminol/SponsorBox'
 import { useLanguage } from '../i18n/useLanguage'
 import '../components/luminol/luminol.css'
 
@@ -284,13 +286,6 @@ function ManualPeek() {
 }
 
 /* ── 5. What students learn + NGSS ──────────────────────────────────── */
-const NGSS = [
-  { group: 'pe',  rows: ['ps12'] },
-  { group: 'dci', rows: ['ps1b'] },
-  { group: 'sep', rows: ['invest', 'data', 'math', 'explain', 'argue'] },
-  { group: 'ccc', rows: ['pattern', 'cause', 'scale'] },
-]
-
 function Learn() {
   const { t } = useLanguage()
   return (
@@ -307,27 +302,7 @@ function Learn() {
         </Reveal>
         <Reveal as="p" style={{ marginTop: 18, fontSize: 16, color: 'var(--lum-muted)' }}>{t('luminol.learn.careers')}</Reveal>
 
-        <Reveal style={{ marginTop: 48, borderRadius: 12, background: 'var(--lum-paper)', color: 'var(--lum-paper-ink)', padding: 'clamp(20px, 4vw, 36px)' }}>
-          <h3 style={{ fontSize: 'clamp(24px, 3.4vw, 32px)' }}>{t('luminol.learn.ngssTitle')}</h3>
-          <p style={{ marginTop: 6, fontSize: 14, opacity: 0.75 }}>{t('luminol.learn.ngssSub')}</p>
-          {NGSS.map(g => (
-            <div key={g.group} style={{ marginTop: 24 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#0f6f68', marginBottom: 6 }}>{t(`luminol.learn.groups.${g.group}`)}</div>
-              <dl style={{ margin: 0 }}>
-                {g.rows.map(r => (
-                  <div key={r} className="lk-ngss-row" style={{
-                    display: 'grid', gridTemplateColumns: '92px 230px 1fr', gap: 16, padding: '12px 0',
-                    borderTop: '1px solid rgba(43,36,22,0.18)', alignItems: 'baseline',
-                  }}>
-                    <dt style={{ fontFamily: 'var(--lum-mono)', fontSize: 13, fontWeight: 700 }}>{t(`luminol.learn.rows.${r}.code`)}</dt>
-                    <dt style={{ fontWeight: 700, fontSize: 15 }}>{t(`luminol.learn.rows.${r}.name`)}</dt>
-                    <dd style={{ margin: 0, fontSize: 15, lineHeight: 1.5 }}>{t(`luminol.learn.rows.${r}.what`)}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          ))}
-        </Reveal>
+        <Reveal><NgssPlate /></Reveal>
       </div>
     </section>
   )
@@ -530,6 +505,7 @@ function Sponsor() {
     }}>
       <div style={wrap}>
         <SectionHead title={t('luminol.sponsor.title')} sub={t('luminol.sponsor.sub')} center />
+        <Reveal><SponsorBox /></Reveal>
 
         {/* What your sponsorship builds */}
         <Reveal>
@@ -545,15 +521,6 @@ function Sponsor() {
               <div style={{ marginTop: 8, fontSize: 16 }}>= {t('luminol.sponsor.builds.class')}</div>
             </div>
           </div>
-        </Reveal>
-
-        {/* Founding sponsor callout */}
-        <Reveal style={{
-          marginTop: 22, padding: 'clamp(20px, 4vw, 28px)', borderRadius: 12,
-          border: '1px solid rgba(240,192,112,0.55)', background: 'rgba(240,192,112,0.08)',
-        }}>
-          <div style={{ fontFamily: 'var(--lum-display)', fontWeight: 700, fontSize: 28, textTransform: 'uppercase', color: '#f0c070' }}>{t('luminol.sponsor.founding.title')}</div>
-          <div style={{ marginTop: 6, fontSize: 17 }}>{t('luminol.sponsor.founding.text')}</div>
         </Reveal>
 
         {/* Tiers */}
@@ -598,7 +565,7 @@ function Sponsor() {
               ))}
             </ul>
           </Reveal>
-          <Reveal delay={100} style={{ padding: '24px 22px', borderRadius: 12, background: 'var(--lum-panel)', border: '1px solid rgba(70,227,211,0.35)', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <Reveal id="sponsor-contact" delay={100} style={{ scrollMarginTop: 100, padding: '24px 22px', borderRadius: 12, background: 'var(--lum-panel)', border: '1px solid rgba(70,227,211,0.35)', display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div style={{ fontFamily: 'var(--lum-display)', fontWeight: 700, fontSize: 30, textTransform: 'uppercase' }}>{t('luminol.sponsor.contactTitle')}</div>
             <CopyEmail />
             <p style={{ fontSize: 13, color: 'var(--lum-muted)', lineHeight: 1.5 }}>{t('luminol.sponsor.ckf')}</p>
@@ -639,8 +606,6 @@ export default function LuminolKit() {
         .lk-track { scrollbar-width: none; }
         .lk-hero > * { min-width: 0; }
         @media (max-width: 900px) {
-          .lk-ngss-row { grid-template-columns: 80px 1fr !important; }
-          .lk-ngss-row dd { grid-column: 1 / -1; }
           .lk-demo-card { grid-template-columns: 1fr !important; }
           .lk-demo-vials { justify-content: center; }
         }

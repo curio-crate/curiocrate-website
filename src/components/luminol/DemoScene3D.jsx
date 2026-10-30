@@ -1,35 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { MeshReflectorMaterial, Html, Sparkles } from '@react-three/drei'
+import { MeshReflectorMaterial, Html } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import * as THREE from 'three'
+import Museum from './DemoMuseum3D'
+import { GLOW_COLOR, damp, makeTexture } from './scene3dUtils'
 
 /*
  * 3D stage for /demo. Two sets, one at a time:
- *   - scene 0: Gallery 3 at night — wet reflective floor, smashed case, sweeping flashlight,
- *     and the mop swirls lighting up blue-green once the glow chemical is introduced.
+ *   - scene 0: Gallery 3 at night (DemoMuseum3D.jsx).
  *   - scenes 1–4: a lab bench with six glass tubes, a pipette, and luminol glow with bloom.
  * Purely visual + click targets; every interaction also exists as an HTML button in Demo.jsx.
  */
-
-const GLOW_COLOR = new THREE.Color('#46e3d3')
-const damp = THREE.MathUtils.damp
-
-function makeTexture(w, h, draw) {
-  const c = document.createElement('canvas')
-  c.width = w; c.height = h
-  draw(c.getContext('2d'), w, h)
-  const tx = new THREE.CanvasTexture(c)
-  tx.colorSpace = THREE.SRGBColorSpace
-  tx.anisotropy = 4
-  return tx
-}
-
-// Deterministic pseudo-random so the shards land in the same place every render.
-function rng(seed) {
-  let s = seed
-  return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646 }
-}
 
 /* ── Camera rig: eases toward a target position / look-at each frame ──── */
 function CameraRig({ pos, look, reduce, wobble = 0 }) {
@@ -53,149 +35,6 @@ function CameraRig({ pos, look, reduce, wobble = 0 }) {
     camera.lookAt(lookNow.current)
   })
   return null
-}
-
-/* ── Scene 0: the museum ─────────────────────────────────────────────── */
-function Museum({ beat, reduce, mobile }) {
-  const spot = useRef()
-  // The spotlight's aim point; a plain object passed as the light's target and moved each frame.
-  const [aim] = useState(() => new THREE.Object3D())
-  const target = useRef(aim)
-  const smear = useRef()
-  const ambient = useRef()
-
-  const smearTex = useMemo(() => makeTexture(1024, 640, (ctx, w, h) => {
-    ctx.clearRect(0, 0, w, h)
-    ctx.lineCap = 'round'
-    ctx.shadowColor = 'white'
-    const r = rng(7)
-    // wide figure-eight mop strokes, spread thin
-    for (let i = 0; i < 16; i++) {
-      const y = 70 + i * 34 + r() * 20
-      ctx.lineWidth = 26 + r() * 40
-      ctx.shadowBlur = 40
-      ctx.strokeStyle = `rgba(255,255,255,${0.10 + r() * 0.16})`
-      ctx.beginPath()
-      ctx.moveTo(40 + r() * 80, y)
-      ctx.bezierCurveTo(260, y - 90 + r() * 40, 420, y + 90 - r() * 40, 600, y)
-      ctx.bezierCurveTo(760, y - 80, 880, y + 70, 990 - r() * 60, y + (r() - 0.5) * 30)
-      ctx.stroke()
-    }
-    // a denser patch by the staff door side (right)
-    for (let i = 0; i < 26; i++) {
-      ctx.fillStyle = `rgba(255,255,255,${0.12 + r() * 0.2})`
-      ctx.shadowBlur = 18
-      ctx.beginPath()
-      ctx.arc(820 + r() * 180, 120 + r() * 220, 4 + r() * 14, 0, Math.PI * 2)
-      ctx.fill()
-    }
-  }), [])
-
-  const doorSign = useMemo(() => makeTexture(256, 96, (ctx, w, h) => {
-    ctx.fillStyle = '#e8d8b0'; ctx.fillRect(0, 0, w, h)
-    ctx.fillStyle = '#2b2416'; ctx.font = 'bold 54px "Barlow Condensed", Arial Narrow, sans-serif'
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('STAFF', w / 2, h / 2 + 2)
-  }), [])
-  const gallerySign = useMemo(() => makeTexture(512, 192, (ctx, w, h) => {
-    ctx.fillStyle = '#e8d8b0'; ctx.fillRect(0, 0, w, h)
-    ctx.fillStyle = '#2b2416'; ctx.font = 'bold 92px "Barlow Condensed", Arial Narrow, sans-serif'
-    ctx.textBaseline = 'middle'; ctx.fillText('GALLERY 3', 28, h / 2 - 14)
-    ctx.font = '28px "JetBrains Mono", monospace'; ctx.globalAlpha = 0.7; ctx.fillText('MINERALOGY', 32, h - 34)
-  }), [])
-
-  const shards = useMemo(() => {
-    const r = rng(42)
-    return Array.from({ length: 34 }, () => ({
-      pos: [(r() - 0.5) * 4.6, 0.02, -1.4 + (r() - 0.3) * 3.4],
-      rot: [-Math.PI / 2 + (r() - 0.5) * 0.3, 0, r() * Math.PI * 2],
-      s: 0.06 + r() * 0.16,
-    }))
-  }, [])
-
-  const reveal = beat >= 2
-
-  useFrame((state, dt) => {
-    const t = state.clock.elapsedTime
-    if (target.current) {
-      target.current.position.x = reduce ? 0.6 : Math.sin(t * 0.55) * 3.4
-      target.current.position.z = reduce ? -1 : -1 + Math.cos(t * 0.35) * 1.4
-    }
-    if (spot.current) spot.current.intensity = damp(spot.current.intensity, reveal ? 18 : 60, 2, dt)
-    if (ambient.current) ambient.current.intensity = damp(ambient.current.intensity, reveal ? 0.04 : 0.16, 2, dt)
-    if (smear.current) smear.current.opacity = damp(smear.current.opacity, reveal ? 0.75 : 0, reduce ? 50 : 0.9, dt)
-  })
-
-  return (
-    <group>
-      <ambientLight ref={ambient} intensity={0.16} color="#9fd8d2" />
-      <primitive object={aim} position={[0, 0, -1]} />
-      <spotLight
-        ref={spot} position={[-1.5, 5.5, 4.5]} angle={0.32} penumbra={0.7} intensity={60}
-        color="#fff4d6" distance={18} decay={1.6} target={aim}
-      />
-      <pointLight position={[4.6, 2.6, -4.4]} intensity={2} color="#46e3d3" distance={6} />
-
-      {/* wet floor */}
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]}>
-        <planeGeometry args={[30, 30]} />
-        <MeshReflectorMaterial
-          blur={[300, 80]} resolution={mobile ? 256 : 768} mixBlur={1} mixStrength={18}
-          roughness={0.9} depthScale={1.1} minDepthThreshold={0.4} maxDepthThreshold={1.3}
-          color="#0a1f22" metalness={0.55} mirror={0.6}
-        />
-      </mesh>
-      {/* glowing mop swirls (the hidden blood, revealed) */}
-      <mesh rotation-x={-Math.PI / 2} position={[0.4, 0.012, -0.6]}>
-        <planeGeometry args={[11, 6.8]} />
-        <meshBasicMaterial
-          ref={smear} map={smearTex} color={GLOW_COLOR} transparent opacity={0}
-          blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false}
-        />
-      </mesh>
-
-      {/* walls */}
-      <mesh position={[0, 4, -6]}><planeGeometry args={[30, 8]} /><meshStandardMaterial color="#0b2326" roughness={0.95} /></mesh>
-      <mesh position={[-7, 4, 0]} rotation-y={Math.PI / 2}><planeGeometry args={[30, 8]} /><meshStandardMaterial color="#09201f" roughness={0.95} /></mesh>
-      <mesh position={[-3.4, 3.1, -5.98]}><planeGeometry args={[2.2, 0.82]} /><meshStandardMaterial map={gallerySign} roughness={0.8} /></mesh>
-
-      {/* pedestal + smashed case */}
-      <mesh position={[0, 0.55, -2]}><boxGeometry args={[1.4, 1.1, 1.4]} /><meshStandardMaterial color="#123234" roughness={0.6} /></mesh>
-      <mesh position={[0, 1.13, -2]}><cylinderGeometry args={[0.18, 0.22, 0.06, 24]} /><meshStandardMaterial color="#26494c" /></mesh>
-      <lineSegments position={[0, 1.66, -2]}>
-        <edgesGeometry args={[new THREE.BoxGeometry(1.5, 1.05, 1.5)]} />
-        <lineBasicMaterial color="#cfeeea" transparent opacity={0.55} />
-      </lineSegments>
-      {[[-0.75, 0], [0, -0.75], [0.75, 0]].map(([x, z], i) => (
-        <mesh key={i} position={[x, 1.66, -2 + z]} rotation-y={x ? Math.PI / 2 : 0}>
-          <planeGeometry args={[1.5, 1.05]} />
-          <meshPhysicalMaterial color="#cfeeea" transparent opacity={0.1} roughness={0.05} side={THREE.DoubleSide} depthWrite={false} />
-        </mesh>
-      ))}
-      {shards.map((s, i) => (
-        <mesh key={i} position={s.pos} rotation={s.rot} scale={s.s}>
-          <circleGeometry args={[1, 3]} />
-          <meshStandardMaterial color="#e6fffb" metalness={0.9} roughness={0.08} transparent opacity={0.8} side={THREE.DoubleSide} />
-        </mesh>
-      ))}
-
-      {/* staff door */}
-      <group position={[4.6, 0, -5.9]}>
-        <mesh position={[0, 1.5, 0]}><boxGeometry args={[1.5, 3, 0.12]} /><meshStandardMaterial color="#0f2b2e" roughness={0.7} /></mesh>
-        <mesh position={[0, 1.5, 0.04]}><boxGeometry args={[1.66, 3.12, 0.08]} /><meshStandardMaterial color="#1c3d40" roughness={0.6} /></mesh>
-        <mesh position={[0, 2.55, 0.1]}><planeGeometry args={[0.8, 0.3]} /><meshStandardMaterial map={doorSign} /></mesh>
-        <mesh position={[0.55, 1.4, 0.12]}><sphereGeometry args={[0.05, 12, 12]} /><meshStandardMaterial color="#c8d6d3" metalness={0.9} roughness={0.2} /></mesh>
-      </group>
-
-      {/* mop + bucket */}
-      <group position={[-2.9, 0, 0.4]}>
-        <mesh position={[0, 0.32, 0]}><cylinderGeometry args={[0.38, 0.3, 0.64, 24, 1, true]} /><meshStandardMaterial color="#1f5257" side={THREE.DoubleSide} roughness={0.5} /></mesh>
-        <mesh position={[0.45, 1.05, 0.3]} rotation={[0.25, 0, -0.42]}><cylinderGeometry args={[0.025, 0.025, 2.3, 8]} /><meshStandardMaterial color="#a9bfbc" /></mesh>
-        <mesh position={[0.95, 0.05, 0.55]} rotation={[0, 0.4, 0]}><boxGeometry args={[0.55, 0.08, 0.22]} /><meshStandardMaterial color="#d6e2df" roughness={1} /></mesh>
-      </group>
-
-      {!reduce && <Sparkles count={mobile ? 30 : 70} scale={[9, 4, 7]} position={[0, 2, -1]} size={2.2} speed={0.25} opacity={0.35} color="#e8fffb" />}
-    </group>
-  )
 }
 
 /* ── Scenes 1–4: the lab bench ───────────────────────────────────────── */
@@ -227,20 +66,21 @@ function tubeLayout(aspect) {
 
 function NumberTag({ n, position }) {
   const tex = useMemo(() => makeTexture(128, 128, (ctx, w, h) => {
-    ctx.fillStyle = '#e8d8b0'; ctx.fillRect(10, 10, w - 20, h - 20)
-    ctx.fillStyle = '#2b2416'; ctx.font = 'bold 84px "Barlow Condensed", Arial Narrow, sans-serif'
+    ctx.fillStyle = '#e8d8b0'; ctx.fillRect(0, 0, w, h)
+    ctx.fillStyle = '#2b2416'; ctx.font = 'bold 96px "Barlow Condensed", Arial Narrow, sans-serif'
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(n), w / 2, h / 2 + 4)
   }), [n])
   return (
     <mesh position={position}>
-      <planeGeometry args={[0.3, 0.3]} />
-      <meshBasicMaterial map={tex} toneMapped={false} />
+      <planeGeometry args={[0.2, 0.2]} />
+      <meshStandardMaterial map={tex} roughness={0.6} emissive="#ffffff" emissiveMap={tex} emissiveIntensity={0.12} />
     </mesh>
   )
 }
 
 function Tube({ i, position, glow, lit, marker, interactive, onTube, hovered, setHovered }) {
   const liquidMat = useRef()
+  const topMat = useRef()
   const light = useRef()
   const group = useRef()
   const glassGeo = useMemo(() => new THREE.LatheGeometry(tubeProfile(TUBE_R, TUBE_H), 40), [])
@@ -258,8 +98,9 @@ function Tube({ i, position, glow, lit, marker, interactive, onTube, hovered, se
     const target = lit && now >= litAt.current ? glow : 0
     if (liquidMat.current) {
       liquidMat.current.emissiveIntensity = damp(liquidMat.current.emissiveIntensity, target * 5.5, 3, dt)
+      if (topMat.current) topMat.current.emissiveIntensity = liquidMat.current.emissiveIntensity * 1.1
     }
-    if (light.current) light.current.intensity = damp(light.current.intensity, target * 9, 3, dt)
+    if (light.current) light.current.intensity = damp(light.current.intensity, target * 3.2, 3, dt)
     if (group.current) group.current.position.y = damp(group.current.position.y, isHover ? 0.12 : 0, 8, dt)
   })
 
@@ -273,7 +114,7 @@ function Tube({ i, position, glow, lit, marker, interactive, onTube, hovered, se
         {/* liquid top */}
         <mesh position={[0, 0.05 + LIQUID_H, 0]} rotation-x={-Math.PI / 2}>
           <circleGeometry args={[TUBE_R - 0.035, 32]} />
-          <meshStandardMaterial color="#2a5754" transparent opacity={0.7} />
+          <meshStandardMaterial ref={topMat} color="#1d4a47" emissive={GLOW_COLOR} emissiveIntensity={0} toneMapped={false} />
         </mesh>
         {/* glass */}
         <mesh geometry={glassGeo} position={[0, 0.05, 0]}>
@@ -288,13 +129,13 @@ function Tube({ i, position, glow, lit, marker, interactive, onTube, hovered, se
           <torusGeometry args={[TUBE_R, 0.022, 8, 40]} />
           <meshStandardMaterial color="#e6fbf8" roughness={0.1} />
         </mesh>
-        <NumberTag n={i + 1} position={[0, 1.62, TUBE_R + 0.03]} />
-        <pointLight ref={light} position={[0, 0.6, 0.15]} color="#46e3d3" intensity={0} distance={3.2} decay={2} />
+        <pointLight ref={light} position={[0, 0.6, 0]} color="#46e3d3" intensity={0} distance={2.2} decay={2} />
       </group>
 
       {/* marker ring on the bench (prediction / limit) */}
+      <NumberTag n={i + 1} position={[0, RACK_Y - RACK_T / 2, RACK_D / 2 + 0.006]} />
       {marker && (
-        <mesh position={[0, 0.012, 0]} rotation-x={-Math.PI / 2}>
+        <mesh position={[0, 0.07, 0]} rotation-x={-Math.PI / 2}>
           <ringGeometry args={[0.36, 0.42, 48]} />
           <meshBasicMaterial color={marker === 'limit' ? '#46e3d3' : '#f0c070'} toneMapped={false} transparent opacity={0.95} />
         </mesh>
@@ -310,6 +151,35 @@ function Tube({ i, position, glow, lit, marker, interactive, onTube, hovered, se
         <cylinderGeometry args={[0.5, 0.5, TUBE_H + 0.6, 12]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
+    </group>
+  )
+}
+
+const RACK_Y = 1.55   // top of the upper plate
+const RACK_T = 0.16   // plate thickness
+const RACK_D = 0.66   // plate depth
+const RACK_COLOR = '#7d918f'
+
+function Rack({ row }) {
+  const xs = useMemo(() => row.map(p => p[0]), [row])
+  const z = row[0][2]
+  const left = Math.min(...xs) - 0.55, right = Math.max(...xs) + 0.55
+  const cx = (left + right) / 2, w = right - left
+  const plate = useMemo(() => {
+    const s = new THREE.Shape()
+    s.moveTo(-w / 2, -RACK_D / 2); s.lineTo(w / 2, -RACK_D / 2); s.lineTo(w / 2, RACK_D / 2); s.lineTo(-w / 2, RACK_D / 2); s.closePath()
+    xs.forEach(x => { const h = new THREE.Path(); h.absarc(x - cx, 0, TUBE_R + 0.035, 0, Math.PI * 2, true); s.holes.push(h) })
+    const g = new THREE.ExtrudeGeometry(s, { depth: RACK_T, bevelEnabled: false, curveSegments: 40 })
+    g.rotateX(Math.PI / 2) // shape lies flat; extrudes downward from y = 0
+    return g
+  }, [xs, cx, w])
+  return (
+    <group position={[cx, 0, z]}>
+      <mesh position={[0, 0.025, 0]}><boxGeometry args={[w, 0.05, RACK_D]} /><meshStandardMaterial color={RACK_COLOR} roughness={0.55} /></mesh>
+      <mesh geometry={plate} position={[0, RACK_Y, 0]}><meshStandardMaterial color={RACK_COLOR} roughness={0.55} /></mesh>
+      {[-1, 1].map(sd => (
+        <mesh key={sd} position={[sd * (w / 2 - 0.05), RACK_Y / 2, 0]}><boxGeometry args={[0.1, RACK_Y, RACK_D]} /><meshStandardMaterial color={RACK_COLOR} roughness={0.55} /></mesh>
+      ))}
     </group>
   )
 }
@@ -403,6 +273,7 @@ function Lab({ scene, glows, tested, limit, prediction, interactive, onTube, act
   const { size } = useThree()
   const aspect = size.width / size.height
   const positions = useMemo(() => tubeLayout(aspect), [aspect])
+  const rackRows = useMemo(() => (aspect < 0.9 ? [positions.slice(0, 3), positions.slice(3)] : [positions]), [positions, aspect])
   const [hovered, setHovered] = useState(null)
   const ambient = useRef()
   const key = useRef()
@@ -436,15 +307,8 @@ function Lab({ scene, glows, tested, limit, prediction, interactive, onTube, act
       </mesh>
       <mesh position={[0, 3, -5]}><planeGeometry args={[30, 10]} /><meshStandardMaterial color="#071416" roughness={1} /></mesh>
 
-      {/* racks */}
-      {(aspect < 0.9 ? [[-0.33, 1.0], [0.33, -1.0]] : [[0, 0]]).map(([x, z]) => (
-        <group key={z} position={[x, 0, z]}>
-          <mesh position={[0, 0.42, 0]}><boxGeometry args={[aspect < 0.9 ? 3.5 : 6.9, 0.07, 0.62]} /><meshStandardMaterial color="#1a3a3c" roughness={0.5} metalness={0.3} /></mesh>
-          {[-1, 1].map(s => (
-            <mesh key={s} position={[s * (aspect < 0.9 ? 1.7 : 3.4), 0.21, 0]}><boxGeometry args={[0.08, 0.42, 0.62]} /><meshStandardMaterial color="#1a3a3c" /></mesh>
-          ))}
-        </group>
-      ))}
+      {/* racks: tubes stand on the base and pass through holes in the top plate */}
+      {rackRows.map(row => <Rack key={row[0][2]} row={row} />)}
 
       {positions.map((p, i) => (
         <Tube
@@ -466,7 +330,8 @@ function Rig({ scene, activeTube, reduce }) {
   const { size } = useThree()
   const aspect = size.width / size.height
   if (scene === 0) {
-    return <CameraRig pos={aspect < 0.9 ? [0.6, 3.4, 10.5] : [0.8, 2.3, 7.4]} look={[0.4, 0.9, -1.8]} reduce={reduce} wobble={0.6} />
+    if (aspect < 0.9) return <CameraRig pos={[1.2, 3.5, 12.8]} look={[0.6, 2.7, -2.4]} reduce={reduce} wobble={0.35} />
+    return <CameraRig pos={[-0.4, 2.4, 8.2]} look={[-2.2, 1.75, -2.4]} reduce={reduce} wobble={0.35} />
   }
   const portrait = aspect < 0.9
   const fitW = portrait ? 4.8 : 8.6
@@ -474,25 +339,26 @@ function Rig({ scene, activeTube, reduce }) {
   const shift = scene === 3 && !portrait ? (activeTube - 2.5) * 0.3 : 0
   const pull = scene === 4 ? 1.15 : 1
   const y = portrait ? 6.6 : 3.6
-  return <CameraRig pos={[shift, y * pull, dist * pull]} look={[shift * 0.6, portrait ? 2.6 : 2.3, 0]} reduce={reduce} wobble={scene === 4 ? 0.8 : 0.15} />
+  return <CameraRig pos={[shift, y * pull, dist * pull]} look={[shift * 0.6, portrait ? 2.6 : 1.85, 0]} reduce={reduce} wobble={scene === 4 ? 0.8 : 0.15} />
 }
 
 export default function DemoScene3D(props) {
   const { scene, reduce, mobile } = props
   return (
     <Canvas
+      shadows={!mobile}
       dpr={mobile ? [1, 1.5] : [1, 2]}
       camera={{ fov: 38, position: [0, 3, 9], near: 0.1, far: 80 }}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
       style={{ position: 'absolute', inset: 0 }}
     >
-      <color attach="background" args={['#020809']} />
-      <fog attach="fog" args={['#020809', 10, 26]} />
+      <color attach="background" args={['#020608']} />
+      <fog attach="fog" args={['#020608', scene === 0 ? 12 : 10, scene === 0 ? 30 : 26]} />
       <Rig scene={scene} activeTube={props.activeTube} reduce={reduce} />
-      {scene === 0 ? <Museum beat={props.beat} reduce={reduce} mobile={mobile} /> : <Lab {...props} />}
+      {scene === 0 ? <Museum beat={props.beat} reduce={reduce} mobile={mobile} signs={props.labels.signs} /> : <Lab {...props} />}
       <EffectComposer multisampling={0}>
-        <Bloom mipmapBlur luminanceThreshold={0.22} luminanceSmoothing={0.25} intensity={1.35} radius={0.75} />
-        <Vignette eskil={false} offset={0.25} darkness={0.75} />
+        <Bloom mipmapBlur luminanceThreshold={scene === 0 ? 0.55 : 0.4} luminanceSmoothing={0.25} intensity={scene === 0 ? 1.1 : 1.35} radius={0.75} />
+        <Vignette eskil={false} offset={0.2} darkness={0.85} />
       </EffectComposer>
     </Canvas>
   )

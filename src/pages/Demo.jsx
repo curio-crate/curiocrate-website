@@ -259,10 +259,16 @@ export default function Demo() {
     ? { initial: false, animate: { opacity: 1 }, exit: { opacity: 0 } }
     : { initial: { opacity: 0, y: 24, filter: 'blur(6px)' }, animate: { opacity: 1, y: 0, filter: 'blur(0px)' }, exit: { opacity: 0, y: -16, filter: 'blur(6px)' }, transition: { duration: 0.5, ease: [0.2, 0.7, 0.2, 1] } }
 
+  const labels = useMemo(() => ({
+    limit: t('demo.s3.limit'),
+    signs: {
+      gallery: t('demo.signs.gallery'), mineralogy: t('demo.signs.mineralogy'), staff: t('demo.signs.staff'),
+      plaque: t('demo.signs.plaque'), tape: t('demo.signs.tape'),
+    },
+  }), [t])
   const stageProps = {
     scene, beat, glows, tested, limit, prediction, interactive, onTube, dropKey, reduce, mobile,
-    activeTube: Math.min(5, tested), lightsOff: scene >= 2,
-    labels: { limit: t('demo.s3.limit') },
+    activeTube: Math.min(5, tested), lightsOff: scene >= 2, labels,
   }
   const flat = <FlatStage {...stageProps} />
 
@@ -293,6 +299,7 @@ export default function Demo() {
           </div>
 
           {/* legibility gradients */}
+          {scene === 0 && <div aria-hidden className="demo-s0-shade" />}
           <div aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(2,8,9,0.92) 0%, rgba(2,8,9,0.55) 24%, rgba(2,8,9,0) 42%, rgba(2,8,9,0) 66%, rgba(2,8,9,0.9) 100%)' }} />
 
           {/* overlay */}
@@ -305,7 +312,7 @@ export default function Demo() {
             </div>
 
             {scene < 4 && (
-              <div style={{ maxWidth: 1000, width: '100%', margin: 'clamp(12px, 3vh, 36px) auto 0', textAlign: 'center' }}>
+              <div className={scene === 0 ? 'demo-copy demo-copy--s0' : 'demo-copy'}>
                 <AnimatePresence mode="wait">
                   <motion.div key={`${scene}-${big}`} {...motionText}>
                     <h1 ref={headRef} tabIndex={-1} className="demo-big">{big}</h1>
@@ -318,7 +325,7 @@ export default function Demo() {
                       {beat >= 1 && (
                         <motion.figure key="q" {...motionText} style={{ margin: 0 }}>
                           <blockquote className="demo-quote">“{t('demo.s0.quote')}”</blockquote>
-                          <figcaption style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 8, fontSize: 15, color: 'var(--lum-muted)' }}>
+                          <figcaption style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 8, fontSize: 15, color: 'var(--lum-muted)' }}>
                             <img src="/kits/luminol/char-okonkwo.webp" alt="" width={36} height={38} style={{ width: 36, height: 'auto', borderRadius: 6 }} />
                             {t('demo.s0.who')}
                           </figcaption>
@@ -434,6 +441,19 @@ export default function Demo() {
           font-family: var(--lum-display); font-weight: 700; text-transform: none;
           font-size: clamp(36px, 7vw, 86px); line-height: 1.02; letter-spacing: -0.005em;
           color: #f2fffc; text-shadow: 0 4px 30px rgba(0,0,0,0.8); outline: none;
+        }
+        .demo-copy { max-width: 1000px; width: 100%; margin: clamp(12px, 3vh, 36px) auto 0; text-align: center; }
+        .demo-copy figcaption { justify-content: center; }
+        .demo-s0-shade { display: none; }
+        @media (min-width: 900px) and (min-aspect-ratio: 9/10) {
+          .demo-copy--s0 { max-width: 1100px; text-align: left; }
+          .demo-copy--s0 > * { max-width: 600px; }
+          .demo-copy--s0 figcaption { justify-content: flex-start; }
+          .lum .demo-copy--s0 .demo-big { font-size: clamp(44px, 5.4vw, 78px); }
+          .demo-s0-shade {
+            display: block; position: absolute; inset: 0; pointer-events: none;
+            background: linear-gradient(90deg, rgba(2,6,8,0.86) 0%, rgba(2,6,8,0.6) 34%, rgba(2,6,8,0) 58%);
+          }
         }
         .demo-small { margin-top: 14px; font-size: clamp(17px, 2.3vw, 22px); line-height: 1.45; color: rgba(228,243,240,0.85); text-shadow: 0 2px 12px rgba(0,0,0,0.9); }
         .demo-quote { font-family: var(--lum-display); font-weight: 600; font-size: clamp(24px, 3.8vw, 40px); line-height: 1.1; color: var(--lum-paper); margin: 0; }
